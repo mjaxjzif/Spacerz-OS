@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Spacerz OS</title>
+<style>
+:root{--acc:#7c5cff;--glass:rgba(18,18,48,.72);--line:rgba(255,255,255,.14);--txt:#f2f3ff;--mut:#a9b0e6;color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden;font-family:"Segoe UI",system-ui,sans-serif;color:var(--txt);background:#05050f;user-select:none}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+#wall{position:fixed;inset:0;background:var(--wp);background-size:cover;transition:background .4s}
+#wall::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 70% 25%,#fff3 0,transparent 1.5px) 0 0/90px 90px,radial-gradient(circle at 20% 70%,#fff4 0,transparent 1px) 0 0/55px 55px}
+.scr{position:fixed;inset:0;display:none}
+.scr.on{display:block}
+/* boot + login */
+#boot{background:#020208;display:none;place-items:center;text-align:center;z-index:100}
+#boot.on{display:grid}
+.logo{font-size:54px;letter-spacing:.2em;font-weight:200}
+.spin{width:30px;height:30px;margin:26px auto 0;border:3px solid #fff3;border-top-color:var(--acc);border-radius:50%;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+#login{z-index:50;backdrop-filter:blur(18px);background:#0a0a2288;text-align:center}
+#login.on{display:grid;place-items:center}
+.lc{display:flex;flex-direction:column;align-items:center;gap:12px}
+#lt{font-size:72px;font-weight:200;line-height:1}
+#ld{color:var(--mut);margin-bottom:26px}
+.ava{width:110px;height:110px;border-radius:50%;display:grid;place-items:center;font-size:58px;background:linear-gradient(135deg,var(--acc),#00e5ff);box-shadow:0 0 40px #7c5cff99}
+.in{background:#ffffff1c;border:1px solid var(--line);border-radius:8px;padding:10px 14px;color:var(--txt);font:inherit;width:240px;text-align:center}
+.pw{display:flex;gap:6px}.pw button{width:42px;border:0;border-radius:8px;background:var(--acc)}
+#hint{color:var(--mut);font-size:13px;min-height:18px}
+/* desktop */
+#desk{position:fixed;inset:0 0 48px 0}
+.ic{position:absolute;width:84px;text-align:center;font-size:12px;padding:6px 2px;border-radius:8px;text-shadow:0 1px 3px #000}
+.ic span{display:block;font-size:36px}
+.ic:hover,.ic.sel{background:#ffffff26}
+.win{position:absolute;display:flex;flex-direction:column;background:var(--glass);backdrop-filter:blur(22px);border:1px solid var(--line);border-radius:12px;box-shadow:0 18px 50px #000a;overflow:hidden;max-width:100vw;max-height:calc(100vh - 48px)}
+.win.max{inset:0!important;width:auto!important;height:auto!important;border-radius:0}
+.win.min{display:none}
+.tb{display:flex;justify-content:space-between;align-items:center;padding:6px 6px 6px 12px;background:#ffffff12;cursor:grab;touch-action:none;font-size:13px}
+.tb button{width:34px;height:26px;border:0;background:none;border-radius:6px}
+.tb button:hover{background:#ffffff26}.tb .xb:hover{background:#e5304a}
+.bd{flex:1;min-height:0;overflow:auto;padding:10px;user-select:text}
+/* taskbar */
+#tb{position:fixed;left:0;right:0;bottom:0;height:48px;display:flex;align-items:center;justify-content:center;gap:4px;background:var(--glass);backdrop-filter:blur(22px);border-top:1px solid var(--line);z-index:40;padding:0 8px}
+#tb>button,#tasks button{border:0;background:none;height:38px;min-width:40px;border-radius:8px;font-size:20px;position:relative}
+#tb>button:hover,#tasks button:hover{background:#ffffff22}
+#tasks{display:flex;gap:4px}
+#tasks button.act::after{content:"";position:absolute;bottom:2px;left:30%;right:30%;height:3px;border-radius:2px;background:var(--acc)}
+#tray{position:absolute;right:12px;text-align:right;font-size:12px;line-height:1.25}
+#start{position:fixed;left:50%;bottom:58px;transform:translateX(-50%);width:min(520px,96vw);background:var(--glass);backdrop-filter:blur(26px);border:1px solid var(--line);border-radius:14px;padding:16px;z-index:45;display:none}
+#start.on{display:block}
+#start .g{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:12px 0}
+#start .g button{background:none;border:0;border-radius:10px;padding:10px 2px;font-size:12px}
+#start .g button:hover{background:#ffffff1f}
+#start .g span{display:block;font-size:30px}
+.pwr{display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);padding-top:10px}
+.pwr button{background:#ffffff14;border:0;border-radius:8px;padding:6px 12px;margin-left:6px}
+/* apps */
+textarea.np{width:100%;height:100%;background:#0006;color:var(--txt);border:0;border-radius:8px;padding:10px;font:14px Consolas,monospace;resize:none}
+.cg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.cg button{padding:14px 0;border:0;border-radius:8px;background:#ffffff1a;font-size:18px}
+.cg button:hover{background:#ffffff33}.cg .op{background:var(--acc)}
+.disp{text-align:right;font-size:30px;padding:8px;margin-bottom:8px;background:#0005;border-radius:8px;min-height:50px;overflow:hidden}
+.term{font:13px Consolas,monospace;height:100%;display:flex;flex-direction:column}
+.term .o{flex:1;overflow:auto;white-space:pre-wrap;color:#7dffb0}
+.term input{background:none;border:0;border-top:1px solid var(--line);color:#fff;font:inherit;padding:6px 0;outline:0}
+.tool{display:flex;gap:8px;align-items:center;margin-bottom:8px;font-size:13px}
+.tool button{padding:4px 10px;border-radius:6px;border:0;background:#ffffff22}
+canvas{background:#fff;border-radius:8px;max-width:100%;touch-action:none}
+canvas.dk{background:#05050f}
+.fl div{padding:8px 10px;border-radius:6px;cursor:pointer}.fl div:hover{background:#ffffff1f}
+.sw{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 16px}
+.sw button{width:70px;height:46px;border-radius:8px;border:2px solid transparent}
+.sw button.sel{border-color:#fff}
+.big{font-size:46px;font-weight:200;text-align:center}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;gap:4px;font-size:13px;margin-top:10px}
+.cal b{color:var(--mut)}.cal .td{background:var(--acc);border-radius:50%}
+</style>
+</head>
+<body>
+<div id="wall"></div>
+
+<div id="boot" class="scr"><div><div class="logo">SPACERZ</div><div class="spin"></div></div></div>
+
+<div id="login" class="scr">
+  <div class="lc">
+    <div id="lt">12:00</div><div id="ld"></div>
+    <div class="ava">🧑‍🚀</div>
+    <input class="in" id="user" placeholder="Username" aria-label="Username" autocomplete="off">
+    <div class="pw"><input class="in" id="pass" type="password" placeholder="Password" aria-label="Password" style="width:190px"><button id="go" aria-label="Sign in">➜</button></div>
+    <input class="in" id="pass2" type="password" placeholder="Confirm password" aria-label="Confirm password" hidden>
+    <div id="hint">Enter a username and password to continue.</div>
+  </div>
+</div>
+
+<div id="desk"></div>
+<div id="start">
+  <input class="in" id="srch" placeholder="Search apps" style="width:100%;text-align:left" aria-label="Search apps">
+  <div class="g" id="sg"></div>
+  <div class="pwr"><span id="sn">Commander</span><div><button id="out">Sign out</button><button id="off">Shut down</button></div></div>
+</div>
+<div id="tb"><button id="sb" aria-label="Start menu">🚀</button><div id="tasks"></div><div id="tray"><div id="tt"></div><div id="td"></div></div></div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s);
+const WPS=['linear-gradient(135deg,#1a0b4d,#0b3d6b 60%,#0a1a33)','linear-gradient(160deg,#3b0a4d,#0d0d3a 55%,#001a2e)','linear-gradient(135deg,#04202b,#0a5c5c 70%,#021012)','linear-gradient(135deg,#4d0a1f,#1a0b3d 60%,#050510)'];
+const ACCS=['#7c5cff','#00e5ff','#ff4fd8','#34e07d'];
+let U='Commander',z=10,wins=[];
+document.documentElement.style.setProperty('--wp',WPS[0]);
+const show=id=>{document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id===id))};
+
+/* clock */
+function tick(){const d=new Date(),t=d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}),dt=d.toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});
+ $('#lt').textContent=t;$('#ld').textContent=dt;$('#tt').textContent=t;$('#td').textContent=d.toLocaleDateString()}
+tick();setInterval(tick,1000);
+
+/* boot, login */
+function boot(){show('boot');setTimeout(()=>show('login'),1600)}
+let ACCT={},creating=false;try{ACCT=JSON.parse(localStorage.getItem('sz_accts')||'{}')}catch(e){}
+const saveAcct=()=>{try{localStorage.setItem('sz_accts',JSON.stringify(ACCT))}catch(e){}};
+const hint=t=>$('#hint').textContent=t;
+async function hash(s){try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('spacerz:'+s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return 'p:'+btoa(unescape(encodeURIComponent(s)))}}
+function setMode(c){creating=c;$('#pass2').hidden=!c;$('#go').setAttribute('aria-label',c?'Create account':'Sign in');hint(c?'No account found. Confirm your password to create one.':'Enter a username and password to continue.')}
+async function signIn(){
+ const u=$('#user').value.trim(),p=$('#pass').value;
+ if(!u||!p){hint('Enter a username and password.');return}
+ const key=u.toLowerCase();
+ if(creating){
+  if(p!==$('#pass2').value){hint('Passwords do not match.');return}
+  if(p.length<4){hint('Use at least 4 characters.');return}
+  ACCT[key]={name:u,h:await hash(p)};saveAcct();enter(u);return}
+ if(!ACCT[key]){setMode(true);$('#pass2').focus();return}
+ if(ACCT[key].h!==await hash(p)){hint('Wrong password. Try again.');return}
+ enter(ACCT[key].name)}
+function enter(u){U=u;$('#pass').value='';$('#pass2').value='';setMode(false);$('#sn').textContent=U;show('');wallOn(true)}
+function wallOn(v){$('#desk').style.display=v?'block':'none';$('#tb').style.display=v?'flex':'none'}
+$('#go').onclick=signIn;$('#pass').onkeydown=e=>{if(e.key==='Enter')creating?$('#pass2').focus():signIn()};$('#pass2').onkeydown=e=>{if(e.key==='Enter')signIn()};$('#user').onkeydown=e=>{if(e.key==='Enter')$('#pass').focus()};$('#user').oninput=()=>{if(creating)setMode(false)};
+$('#out').onclick=()=>{closeAll();$('#start').classList.remove('on');wallOn(false);show('login')};
+$('#off').onclick=()=>{closeAll();$('#start').classList.remove('on');wallOn(false);show('');$('#wall').style.opacity=0;document.body.insertAdjacentHTML('beforeend','<div id="pwr" style="position:fixed;inset:0;z-index:200;background:#000;display:grid;place-items:center"><button class="in" style="width:auto;cursor:pointer" id="pon">⏻ Power on</button></div>');$('#pon').onclick=()=>{$('#pwr').remove();$('#wall').style.opacity=1;boot()}};
+wallOn(false);boot();
+
+/* apps */
+const APPS={
+notepad:{t:'Notepad',i:'📝',w:440,h:340,r:b=>{b.innerHTML='<textarea class="np" placeholder="Start typing..." aria-label="Notepad"></textarea>';const t=$('textarea',b);try{t.value=localStorage.getItem('sz_note')||''}catch(e){}t.oninput=()=>{try{localStorage.setItem('sz_note',t.value)}catch(e){}}}},
+calc:{t:'Calculator',i:'🧮',w:290,h:410,r:b=>{b.innerHTML='<div class="disp">0</div><div class="cg"></div>';const d=$('.disp',b);let e='';
+ '7 8 9 / 4 5 6 * 1 2 3 - 0 . = +'.split(' ').concat(['C','(',')','⌫']).forEach(k=>{const x=document.createElement('button');x.textContent=k;if('/*-+='.includes(k))x.className='op';x.onclick=()=>{
+  if(k==='C')e='';else if(k==='⌫')e=e.slice(0,-1);else if(k==='='){try{if(/^[\d+\-*/.() ]+$/.test(e))e=String(+Function('return '+e)().toFixed(8))}catch(_){e='Error'}}else{if(e==='Error')e='';e+=k}d.textContent=e||'0'};$('.cg',b).append(x)})}},
+paint:{t:'Paint',i:'🎨',w:470,h:400,r:b=>{b.innerHTML='<div class="tool"><input type="color" value="#7c5cff" aria-label="Color"><input type="range" min="2" max="30" value="6" aria-label="Brush size"><button>Clear</button></div><canvas width="440" height="280"></canvas>';
+ const c=$('canvas',b),x=c.getContext('2d'),[col,sz]=b.querySelectorAll('input');let dr=0;x.fillStyle='#fff';x.fillRect(0,0,440,280);x.lineCap='round';
+ const p=e=>{const r=c.getBoundingClientRect();return[(e.clientX-r.left)*440/r.width,(e.clientY-r.top)*280/r.height]};
+ c.onpointerdown=e=>{dr=1;c.setPointerCapture(e.pointerId);x.beginPath();x.moveTo(...p(e))};
+ c.onpointermove=e=>{if(!dr)return;x.strokeStyle=col.value;x.lineWidth=sz.value;x.lineTo(...p(e));x.stroke()};
+ c.onpointerup=()=>dr=0;$('button',b).onclick=()=>{x.fillStyle='#fff';x.fillRect(0,0,440,280)}}},
+term:{t:'Terminal',i:'💻',w:480,h:320,r:b=>{b.innerHTML='<div class="term"><div class="o">Spacerz Terminal. Type help.\n</div><input aria-label="Command" placeholder="> " autofocus></div>';const o=$('.o',b),i=$('input',b);
+ const C={help:()=>'help date whoami echo ls neofetch open <app> clear',date:()=>new Date().toString(),whoami:()=>U,ls:()=>'Documents  Pictures  Music  Games',
+ neofetch:()=>`  🚀  ${U}@spacerz\n  OS: Spacerz OS 1.0\n  Shell: szsh\n  Uptime: ${Math.floor(performance.now()/60000)} min\n  Apps: ${Object.keys(APPS).length}`,
+ echo:a=>a.join(' '),clear:()=>{o.textContent='';return''},open:a=>APPS[a[0]]?(openApp(a[0]),'Opening '+a[0]):'Apps: '+Object.keys(APPS).join(', ')};
+ const st={owner:false,hist:[]},say=t=>{o.textContent+=t+'\n';o.scrollTop=1e9};Object.assign(C,termCmds(say,st));let mode=null,tu='',hi=0;
+ i.onkeydown=e=>{if(!mode&&(e.key==='ArrowUp'||e.key==='ArrowDown')){hi=Math.max(0,Math.min(st.hist.length,hi+(e.key==='ArrowUp'?-1:1)));i.value=st.hist[hi]||'';e.preventDefault();return}
+  if(e.key!=='Enter')return;const v=i.value;i.value='';
+  if(mode==='user'){say('Username: '+v);tu=v.trim();mode='pass';i.type='password';i.placeholder='Password';return}
+  if(mode==='pass'){mode=null;i.type='text';i.placeholder='> ';say('Password: ********');if(tu===OWNER.u&&v===OWNER.p){st.owner=true;say('Access granted. Welcome, Aadvik. Type ownerhelp.')}else say('Access denied.');return}
+  const[m,...a]=v.trim().split(/\s+/);say('> '+v);if(v.trim()){st.hist.push(v);hi=st.hist.length}
+  if(m==='owner'){if(st.owner)say('You are already signed in as owner.');else{mode='user';i.placeholder='Username';say('Owner login')}return}
+  if(m){const r=Object.hasOwn(C,m)?C[m](a):'Unknown command: '+m;if(r)say(r)}}}},
+snake:{t:'Snake',i:'🐍',w:340,h:410,r:(b,w)=>{b.innerHTML='<div class="tool"><b>Score <span>0</span></b><span style="opacity:.6">Arrows or tap sides</span></div><canvas class="dk" width="300" height="300"></canvas>';
+ const c=$('canvas',b),x=c.getContext('2d'),sc=$('b span',b);let s,d,f,n;const reset=()=>{s=[[7,7],[6,7]];d=[1,0];f=[10,5];n=0;sc.textContent=0};reset();
+ const kh=e=>{const m={ArrowUp:[0,-1],ArrowDown:[0,1],ArrowLeft:[-1,0],ArrowRight:[1,0]}[e.key];if(m&&(m[0]+d[0]||m[1]+d[1])){d=m;e.preventDefault()}};addEventListener('keydown',kh);
+ c.onpointerdown=e=>{const r=c.getBoundingClientRect(),dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2;const m=Math.abs(dx)>Math.abs(dy)?[Math.sign(dx),0]:[0,Math.sign(dy)];if(m[0]+d[0]||m[1]+d[1])d=m};
+ const iv=setInterval(()=>{const h=[s[0][0]+d[0],s[0][1]+d[1]];if(h[0]<0||h[1]<0||h[0]>14||h[1]>14||s.some(p=>p[0]===h[0]&&p[1]===h[1])){reset();return}s.unshift(h);
+  if(h[0]===f[0]&&h[1]===f[1]){sc.textContent=++n;f=[Math.floor(Math.random()*15),Math.floor(Math.random()*15)]}else s.pop();
+  x.fillStyle='#05050f';x.fillRect(0,0,300,300);x.fillStyle='#ff4fd8';x.fillRect(f[0]*20+3,f[1]*20+3,14,14);x.fillStyle='#34e07d';s.forEach(p=>x.fillRect(p[0]*20+1,p[1]*20+1,18,18))},120);
+ w.cleanup=()=>{clearInterval(iv);removeEventListener('keydown',kh)}}},
+files:{t:'Files',i:'📁',w:400,h:320,r:b=>{const T={'This PC':['Documents','Pictures','Music','Games'],Documents:['notes.txt','plan.docx'],Pictures:['nebula.png','moon.jpg'],Music:['orbit.mp3'],Games:['snake.exe']};
+ const go=k=>{b.innerHTML=`<b>📁 ${k}</b><div class="fl">${(k!=='This PC'?'<div data-k="This PC">⬆ Back</div>':'')+T[k].map(f=>`<div data-k="${T[f]?f:''}">${T[f]?'📁':'📄'} ${f}</div>`).join('')}</div>`;b.querySelectorAll('[data-k]').forEach(d=>d.onclick=()=>d.dataset.k&&go(d.dataset.k))};go('This PC')}},
+clock:{t:'Clock',i:'🕒',w:320,h:380,r:(b,w)=>{b.innerHTML='<div class="big"></div><div class="cal"></div>';const big=$('.big',b),cal=$('.cal',b),d=new Date();
+ const t=()=>big.textContent=new Date().toLocaleTimeString();t();const iv=setInterval(t,1000);w.cleanup=()=>clearInterval(iv);
+ cal.innerHTML='SMTWTFS'.split('').map(l=>`<b>${l}</b>`).join('')+'<span></span>'.repeat(new Date(d.getFullYear(),d.getMonth(),1).getDay())+Array.from({length:new Date(d.getFullYear(),d.getMonth()+1,0).getDate()},(_,k)=>`<span class="${k+1===d.getDate()?'td':''}">${k+1}</span>`).join('')}},
+settings:{t:'Settings',i:'⚙️',w:420,h:330,r:b=>{b.innerHTML='<b>Wallpaper</b><div class="sw" id="w1"></div><b>Accent color</b><div class="sw" id="w2"></div><p style="color:var(--mut)">Signed in as '+U+'</p>';
+ WPS.forEach((g,k)=>{const x=document.createElement('button');x.style.background=g;x.setAttribute('aria-label','Wallpaper '+(k+1));x.onclick=()=>{document.documentElement.style.setProperty('--wp',g)};$('#w1',b).append(x)});
+ ACCS.forEach(a=>{const x=document.createElement('button');x.style.background=a;x.setAttribute('aria-label','Accent '+a);x.onclick=()=>document.documentElement.style.setProperty('--acc',a);$('#w2',b).append(x)})}}
+};
+
+/* terminal commands */
+const OWNER={u:'Aadvik',p:'Aadvikvivek18'};
+function termCmds(say,st){
+ const own=f=>a=>st.owner?f(a):'Permission denied. Type owner to sign in.';
+ const FS={'notes.txt':'Remember to launch the rocket.','plan.docx':'Plan: build Spacerz OS, add games, explore the galaxy.','readme.md':'Spacerz OS 1.1. Type help to begin.'};
+ const J=['Why do programmers prefer dark mode? Light attracts bugs.','There are 10 kinds of people: those who know binary and those who do not.','A SQL query walks into a bar, sees two tables and asks: can I join you?'];
+ const toast=m=>{const d=document.createElement('div');d.textContent='📢 '+m;d.style.cssText='position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:300;background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--line);padding:10px 18px;border-radius:10px';document.body.append(d);setTimeout(()=>d.remove(),3500)};
+ return{
+ help:()=>'General: help date time whoami hostname pwd ls cat <file> echo calc <expr> rand [max] flip joke cowsay <text> ping <host> history uptime ver neofetch apps open <app> reverse <text> clear\nOwner: owner (asks for username and password)',
+ date:()=>new Date().toDateString(),time:()=>new Date().toLocaleTimeString(),
+ whoami:()=>st.owner?'Aadvik (owner)':U,hostname:()=>'spacerz-pc',pwd:()=>'/home/'+(st.owner?'aadvik':U.toLowerCase()),
+ ls:()=>Object.keys(FS).join('  ')+'  Documents  Games',
+ cat:a=>FS[a[0]]||'cat: file not found',
+ calc:a=>{const e=a.join(' ');try{return /^[\d+\-*/.() %]+$/.test(e)?String(Function('return '+e)()):'Only numbers and + - * / % ( ) allowed'}catch(_){return 'Error'}},
+ rand:a=>String(1+Math.floor(Math.random()*(+a[0]||100))),
+ flip:()=>Math.random()<.5?'Heads':'Tails',
+ joke:()=>J[Math.floor(Math.random()*J.length)],
+ cowsay:a=>{const t=a.join(' ')||'Moo';return ' '+'_'.repeat(t.length+2)+'\n< '+t+' >\n '+'-'.repeat(t.length+2)+'\n        \\   ^__^\n         \\  (oo)\\_______\n            (__)\\       )\\/\\\n                ||----w |\n                ||     ||'},
+ ping:a=>'Pinging '+(a[0]||'localhost')+' ... reply in '+(10+Math.floor(Math.random()*40))+'ms (simulated)',
+ history:()=>st.hist.map((h,k)=>(k+1)+'  '+h).join('\n')||'No history yet',
+ uptime:()=>'up '+Math.floor(performance.now()/60000)+' min',
+ ver:()=>'Spacerz OS 1.1',
+ apps:()=>Object.keys(APPS).join(', '),
+ reverse:a=>[...a.join(' ')].reverse().join(''),
+ ownerhelp:own(()=>'Owner commands: ownerhelp ownerlogout users accent <#hex> wallpaper <1-4> broadcast <msg> killall lock reboot shutdown'),
+ ownerlogout:own(()=>{st.owner=false;return 'Signed out of owner mode.'}),
+ users:own(()=>'Aadvik (owner)\n'+U+' (current)'),
+ killall:own(()=>{closeAll();return ''}),
+ accent:own(a=>/^#[0-9a-f]{3,6}$/i.test(a[0]||'')?(document.documentElement.style.setProperty('--acc',a[0]),'Accent set'):'Usage: accent #ff00aa'),
+ wallpaper:own(a=>WPS[a[0]-1]?(document.documentElement.style.setProperty('--wp',WPS[a[0]-1]),'Wallpaper '+a[0]):'Usage: wallpaper 1-4'),
+ broadcast:own(a=>{toast(a.join(' ')||'Hello');return 'Sent'}),
+ lock:own(()=>{$('#out').click();return ''}),
+ reboot:own(()=>{closeAll();wallOn(false);boot();return ''}),
+ shutdown:own(()=>{$('#off').click();return ''})
+ }}
+
+/* window manager */
+function openApp(id){
+ const A=APPS[id],el=document.createElement('div'),n=wins.length;el.className='win';
+ el.style.cssText=`left:${Math.min(70+n*26,innerWidth/4)}px;top:${40+n*26}px;width:min(${A.w}px,96vw);height:${A.h}px;z-index:${++z}`;
+ el.innerHTML=`<div class="tb"><span>${A.i} ${A.t}</span><div><button data-a="min" aria-label="Minimize">–</button><button data-a="max" aria-label="Maximize">▢</button><button data-a="x" class="xb" aria-label="Close">✕</button></div></div><div class="bd"></div>`;
+ $('#desk').append(el);
+ const w={el,A,btn:document.createElement('button'),cleanup:null};wins.push(w);
+ w.btn.textContent=A.i;w.btn.title=A.t;w.btn.onclick=()=>{if(w.el.classList.contains('min')||+w.el.style.zIndex<z){w.el.classList.remove('min');focus(w)}else{w.el.classList.add('min');paint()}};$('#tasks').append(w.btn);
+ A.r($('.bd',el),w);focus(w);
+ el.onpointerdown=()=>focus(w);
+ el.querySelectorAll('[data-a]').forEach(b=>b.onclick=e=>{e.stopPropagation();const a=b.dataset.a;if(a==='x'){w.cleanup&&w.cleanup();el.remove();w.btn.remove();wins=wins.filter(q=>q!==w)}else if(a==='min'){el.classList.add('min');paint()}else el.classList.toggle('max')});
+ const tb=$('.tb',el);tb.ondblclick=()=>el.classList.toggle('max');
+ tb.onpointerdown=e=>{if(e.target.closest('button')||el.classList.contains('max'))return;const ox=e.clientX-el.offsetLeft,oy=e.clientY-el.offsetTop;tb.setPointerCapture(e.pointerId);
+  tb.onpointermove=m=>{el.style.left=Math.max(-el.offsetWidth+80,m.clientX-ox)+'px';el.style.top=Math.max(0,Math.min(innerHeight-100,m.clientY-oy))+'px'};tb.onpointerup=()=>{tb.onpointermove=null}};
+}
+function focus(w){w.el.style.zIndex=++z;paint()}
+function paint(){wins.forEach(w=>w.btn.classList.toggle('act',!w.el.classList.contains('min')&&+w.el.style.zIndex===z))}
+function closeAll(){wins.forEach(w=>{w.cleanup&&w.cleanup();w.el.remove();w.btn.remove()});wins=[]}
+
+/* desktop icons + start menu */
+Object.keys(APPS).forEach((id,k)=>{const A=APPS[id],d=document.createElement('div');d.className='ic';d.style.cssText=`left:${14+Math.floor(k/6)*92}px;top:${14+(k%6)*92}px`;d.innerHTML=`<span>${A.i}</span>${A.t}`;
+ d.onclick=e=>{document.querySelectorAll('.ic').forEach(x=>x.classList.remove('sel'));d.classList.add('sel')};d.ondblclick=()=>openApp(id);d.onpointerup=e=>{if(e.pointerType==='touch')openApp(id)};$('#desk').append(d)});
+function sg(q=''){$('#sg').innerHTML='';Object.keys(APPS).filter(id=>APPS[id].t.toLowerCase().includes(q.toLowerCase())).forEach(id=>{const b=document.createElement('button');b.innerHTML=`<span>${APPS[id].i}</span>${APPS[id].t}`;b.onclick=()=>{openApp(id);$('#start').classList.remove('on')};$('#sg').append(b)})}
+sg();$('#srch').oninput=e=>sg(e.target.value);
+$('#sb').onclick=e=>{e.stopPropagation();$('#start').classList.toggle('on');$('#srch').value='';sg()};
+$('#start').onclick=e=>e.stopPropagation();
+document.addEventListener('click',()=>$('#start').classList.remove('on'));
+</script>
+</body>
+</html>
